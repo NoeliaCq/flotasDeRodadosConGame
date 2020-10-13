@@ -1,0 +1,83 @@
+import rodados.*
+import dependencias.*
+
+		///////################  ETAPA 1  #################////////
+
+test "Dependencias-flotas-pedidos" {
+	//dependencias
+	const deportes = new Dependencia(empleados = 45)
+	const cultura = new Dependencia(empleados = 31)
+	
+	//Flota deportes
+	const cachito = new Corsa(color = rojo)
+	const corsaAzul = new Corsa(color = azul)
+	const corsaVerde = new Corsa(color = verde)
+	const kwid1 = new Kwid(tieneTanque = true)
+	const especial = new AutoEspecial()
+	especial.capacidad(5)
+	especial.velocidadMax(160)
+	especial.peso(1200)
+	especial.color(beige)
+	deportes.llenarFlota([cachito, corsaAzul, corsaVerde, kwid1, especial])
+	
+	//Flota cultura
+	const kwid2 = new Kwid(tieneTanque = true) 
+	const kwid3 = new Kwid(tieneTanque = true) 
+	const kwid4 = new Kwid(tieneTanque = false) 
+	traffic.interior(popular)  
+	traffic.motor(bataton) 
+	cultura.llenarFlota([cachito, kwid2, kwid3, kwid4, traffic])
+	
+	//pedidos
+	const p1 = new Pedido(distanciaARecorrer = 960, tiempoMax = 8, cantidadDePasajeros = 4, coloresIncompatibles = [negro, azul])
+	const p2 = new Pedido(distanciaARecorrer = 200, tiempoMax = 2, cantidadDePasajeros = 3, coloresIncompatibles = [negro, verde])
+	const p3 = new Pedido(distanciaARecorrer = 1000, tiempoMax = 10, cantidadDePasajeros = 4, coloresIncompatibles = [rojo, negro])
+	const p4 = new Pedido(distanciaARecorrer = 560, tiempoMax = 9, cantidadDePasajeros = 4, coloresIncompatibles = [rojo, negro])
+	const p5 = new Pedido(distanciaARecorrer = 800, tiempoMax = 6, cantidadDePasajeros = 2, coloresIncompatibles = [rojo, verde])
+	const p6 = new Pedido(distanciaARecorrer = 379, tiempoMax = 3, cantidadDePasajeros = 1, coloresIncompatibles = [rojo, azul])
+	deportes.agregarPedido(p1)
+	deportes.agregarPedido(p2)
+	deportes.agregarPedido(p3)
+	cultura.agregarPedido(p4) 
+	cultura.agregarPedido(p5) 
+	cultura.agregarPedido(p6) 
+	
+	//////////TESTS///////////
+	assert.equals(6450, deportes.pesoTotalFlota())
+	assert.equals(10700, cultura.pesoTotalFlota())
+	assert.that(deportes.estaBienEquipada())
+	assert.notThat(cultura.estaBienEquipada())
+	assert.equals(7, deportes.capacidadTotalEnColor(azul))
+	assert.equals(10, cultura.capacidadTotalEnColor(azul))
+	assert.equals(beige, deportes.colorDelRodadoMasRapido())
+	assert.equals(rojo, cultura.colorDelRodadoMasRapido())
+	assert.that(deportes.esGrande())
+	assert.notThat(cultura.esGrande())
+	assert.equals(25, deportes.capacidadFaltante())
+	assert.equals(5, cultura.capacidadFaltante())
+	///////################  ETAPA 3  #################////////
+	assert.equals(11, deportes.totalDePasajeros())
+	assert.equals(7, cultura.totalDePasajeros())
+	assert.equals([], deportes.pedidosImposibles())
+	assert.equals([p5, p6], cultura.pedidosImposibles())
+	assert.that(deportes.colorIncompatibleParaTodos(negro))
+	assert.that(cultura.colorIncompatibleParaTodos(rojo))		
+	
+}
+
+		///////################  ETAPA 2  #################////////
+
+test "Modelo de Pedidos" {
+	//escenario
+	const pedido1 = new Pedido()
+	pedido1.distanciaARecorrer(960)
+	pedido1.tiempoMax(8)
+	pedido1.cantidadDePasajeros(4)
+	pedido1.coloresIncompatibles([azul, negro])
+	const cachito = new Corsa(color = rojo)
+	
+	assert.that(pedido1.puedeSatisfacerPedido(cachito))
+	assert.equals(120, pedido1.velocidadRequerida())
+	pedido1.acelerar()
+	assert.equals(7, pedido1.tiempoMax())
+}
